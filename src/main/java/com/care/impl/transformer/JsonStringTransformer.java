@@ -8,8 +8,11 @@
  * such Confidential Information and shall use it only in accordance with
  * the terms of an agreement between you and CZen.
  */
-package com.care.jsontemplate;
+package com.care.impl.transformer;
 
+import com.care.jsontemplate.ExpressionEvaluator;
+
+import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
@@ -18,10 +21,19 @@ import javax.json.JsonValue;
  *
  * @author suraj.kumar
  */
-public interface JsonValueTransformer {
-    /**
-    * This does a transformation using the provided JsonValue. The value contains all the
-    * relevant information sufficient to produce another Json
-    * Specifically, this will contain _type, _expr, _*/
-    JsonValue transform(JsonObject jsonObject);
+public class JsonStringTransformer extends AbstractJsonValueTransformer {
+    public JsonStringTransformer(ExpressionEvaluator evaluator) {
+        super(evaluator);
+    }
+
+    @Override
+    boolean validateType(Object object) {
+        return object instanceof String;
+    }
+
+    @Override
+    JsonValue create(Object value) {
+        return Json.createValue(value.toString());
+    }
+
 }

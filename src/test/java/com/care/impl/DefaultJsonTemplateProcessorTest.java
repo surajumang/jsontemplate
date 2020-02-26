@@ -8,20 +8,25 @@
  * such Confidential Information and shall use it only in accordance with
  * the terms of an agreement between you and CZen.
  */
-package com.care.jsontemplate;
+package com.care.impl;
 
-import javax.json.JsonObject;
-import javax.json.JsonValue;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created 26 Feb 2020
  *
  * @author suraj.kumar
  */
-public interface JsonValueTransformer {
-    /**
-    * This does a transformation using the provided JsonValue. The value contains all the
-    * relevant information sufficient to produce another Json
-    * Specifically, this will contain _type, _expr, _*/
-    JsonValue transform(JsonObject jsonObject);
+public class DefaultJsonTemplateProcessorTest {
+
+    @Before
+    public void setup() throws Exception{
+
+    }
+
+    @Test
+    public void transformSimple() {
+
+    }
 }
