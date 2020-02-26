@@ -8,25 +8,34 @@
  * such Confidential Information and shall use it only in accordance with
  * the terms of an agreement between you and CZen.
  */
-package com.care.impl;
 
-import com.care.jsontemplate.ExpressionEvaluator;
+package com.care.impl.transformer;
+
+import com.care.impl.JexlExpressionEvaluator;
+import com.care.jsontemplate.JsonValueTransformer;
 import org.apache.commons.jexl3.MapContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * Created 26 Feb 2020
  *
  * @author suraj.kumar
  */
-public class JexlExpressionEvaluatorTest {
 
+public class JsonStringTransformerTest {
     public static final JexlExpressionEvaluator evaluator = new JexlExpressionEvaluator();
+    private JsonObject testObject;
+    private JsonValue expectedValue;
 
     @Before
     public void setup(){
@@ -37,9 +46,13 @@ public class JexlExpressionEvaluatorTest {
     }
 
     @Test
-    public void expressionTest() {
-
-        Assert.assertEquals("Suraj", evaluator.evaluate("name"));
-        Assert.assertEquals(true, evaluator.evaluate("booleanValue"));
+    public void stringTest() {
+        testObject = Json.createObjectBuilder()
+                .add("_expr", "name")
+                .add("_type", "string")
+                .build();
+        expectedValue = Json.createValue("Suraj");
+        JsonValueTransformer stringTransformer = new JsonStringTransformer(evaluator);
+        Assert.assertEquals(expectedValue, stringTransformer.transform(testObject));
     }
 }
