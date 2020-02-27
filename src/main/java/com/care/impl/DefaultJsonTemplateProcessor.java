@@ -11,8 +11,8 @@
 package com.care.impl;
 
 import com.care.impl.transformer.JsonValueTransformerFactory;
-import com.care.jsontemplate.JsonTemplateContext;
 import com.care.jsontemplate.JsonTemplateProcessor;
+import org.apache.commons.jexl3.JexlContext;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -43,23 +43,23 @@ public class DefaultJsonTemplateProcessor implements JsonTemplateProcessor {
     //create a JsonTemplateProcessor with a JsonTemplate which can be invoked more that once
     // by providing a different context.
     @Override
-    public void process(Reader reader, Writer writer, JsonTemplateContext jsonTemplateContext) {
-        transformStep1(Json.createParser(reader), Json.createGenerator(writer), jsonTemplateContext);
+    public void process(Reader reader, Writer writer, JexlContext jexlContext) {
+        transformStep1(Json.createParser(reader), Json.createGenerator(writer), jexlContext);
     }
 
     @Override
-    public String process(String jsonData, JsonTemplateContext jsonTemplateContext) {
+    public String process(String jsonData, JexlContext jexlContext) {
         StringWriter writer = new StringWriter();
-        process(new StringReader(jsonData), writer, jsonTemplateContext);
+        process(new StringReader(jsonData), writer, jexlContext);
         return writer.toString();
     }
 
     @Override
-    public void process(InputStream inputStream, OutputStream outputStream, JsonTemplateContext jsonTemplateContext) {
-        transformStep1(Json.createParser(inputStream), Json.createGenerator(outputStream), jsonTemplateContext);
+    public void process(InputStream inputStream, OutputStream outputStream, JexlContext jexlContext) {
+        transformStep1(Json.createParser(inputStream), Json.createGenerator(outputStream), jexlContext);
     }
 
-    private void transformStep1(JsonParser jsonParser, JsonGenerator generator, JsonTemplateContext context){
+    private void transformStep1(JsonParser jsonParser, JsonGenerator generator, JexlContext jexlContext){
         while (jsonParser.hasNext()){
             switch (jsonParser.next()){
                 case START_OBJECT:
@@ -75,7 +75,7 @@ public class DefaultJsonTemplateProcessor implements JsonTemplateProcessor {
 
                         jsonParser.next();
                         JsonValue metadata = jsonParser.getValue();
-                        generator.write(transform(metadata.asJsonObject(), context));
+                        generator.write(transform(metadata.asJsonObject(), jexlContext));
                         break;
                     }
                     generator.writeKey(keyName);
@@ -91,13 +91,13 @@ public class DefaultJsonTemplateProcessor implements JsonTemplateProcessor {
         generator.flush();
     }
 
-    private JsonValue transform(JsonObject metadata, JsonTemplateContext context){
+    private JsonValue transform(JsonObject metadata, JexlContext jexlContext){
         if (metadata == null){
             return JsonValue.NULL;
         }
         String type = metadata.getString("_type");
         return JsonValueTransformerFactory.getInstance()
-                .get(type, new JexlExpressionEvaluator()).transform(metadata);
+                .get(type, new JexlExpressionEvaluator(jexlContext)).transform(metadata);
     }
 
 }

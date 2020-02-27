@@ -10,10 +10,11 @@
  */
 package com.care.impl;
 
+import com.care.data.Attribute;
 import com.care.impl.transformer.JsonNumberTransformer;
-import com.care.jsontemplate.JsonTemplateContext;
 import com.care.jsontemplate.JsonTemplateProcessor;
 import com.care.jsontemplate.JsonValueTransformer;
+import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.jexl3.MapContext;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -34,7 +36,7 @@ import java.util.logging.Logger;
 public class DefaultJsonTemplateProcessorTest {
     public static final Logger logger = Logger
             .getLogger(DefaultJsonTemplateProcessor.class.getSimpleName());
-    public static JsonTemplateContext context;
+    public static JexlContext jexlContext;
 
     private JsonObject testObject;
     private JsonValue expectedValue;
@@ -43,12 +45,14 @@ public class DefaultJsonTemplateProcessorTest {
     public void setup(){
         Map<String, Object> map = new HashMap<>();
         map.put("name", "Suraj");
+        map.put("arrayField", Arrays.asList("Suraj", "Deepak"));
         map.put("booleanValue", true);
         map.put("number", 12);
-        context = new JexlContextWrapper(map);
+        map.put("tutoring_location_attributes", Attribute.attributes());
+        jexlContext = new MapContext(map);
     }
 
-//    @Test
+    @Test
     public void transformSimple() {
         testObject = Json.createObjectBuilder()
                 .add("_templateField", Json.createObjectBuilder()
@@ -65,8 +69,39 @@ public class DefaultJsonTemplateProcessorTest {
         // use a wrapper to wrap JEXLcontext and delegate calls to it.
         JsonTemplateProcessor jsonTemplateProcessor = new DefaultJsonTemplateProcessor();
 
-        String generated = jsonTemplateProcessor.process(testObject.toString(), context);
+        String generated = jsonTemplateProcessor.process(testObject.toString(), jexlContext);
         Assert.assertEquals(expectedValue.toString(), generated);
 
+    }
+
+    @Test
+    public void arrayTransform() {
+        testObject = Json.createObjectBuilder()
+                .add("_templateField", Json.createObjectBuilder()
+                        .add("_expr", "arrayField")
+                        .add("_type", "array"))
+                .build();
+        expectedValue = Json.createObjectBuilder()
+                .add("templateField", Json.createArrayBuilder()
+                        .add("Suraj")
+                        .add("Deepak"))
+                .build();
+        JsonTemplateProcessor jsonTemplateProcessor = new DefaultJsonTemplateProcessor();
+
+        String generated = jsonTemplateProcessor.process(testObject.toString(), jexlContext);
+        Assert.assertEquals(expectedValue.toString(), generated);
+    }
+
+    @Test
+    public void arrayTransform2() {
+        testObject = Json.createReader(getClass()
+                .getResourceAsStream("/fill_array_test.json")).readObject();
+        expectedValue = Json.createReader(getClass().getResourceAsStream("/fill_array_expected.json")).readObject();
+        JsonTemplateProcessor jsonTemplateProcessor = new DefaultJsonTemplateProcessor();
+
+        logger.info("Input Json : " + testObject.toString());
+        logger.info("Expected Json : " + expectedValue.toString());
+        String generated = jsonTemplateProcessor.process(testObject.toString(), jexlContext);
+        Assert.assertEquals(expectedValue.toString(), generated);
     }
 }

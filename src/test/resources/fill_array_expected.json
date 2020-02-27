@@ -1,0 +1,35 @@
+{
+  "id":"attr-service.tutoring.location",
+  "title":"I'm willing to work in...",
+  "groups":[
+    {
+      "id":"1",
+      "attributes":[
+        {
+          "id":"TTLOCATON001",
+          "label":"Student's home",
+          "type":"boolean",
+          "value":false
+        },
+        {
+          "id":"TTLOCATON002",
+          "label":"Teacher's home",
+          "type":"boolean",
+          "value":false
+        },
+        {
+          "id":"TTLOCATON003",
+          "label":"Learning center",
+          "type":"boolean",
+          "value":false
+        },
+        {
+          "id":"TTLOCATON004",
+          "label":"Online",
+          "type":"boolean",
+          "value":false
+        }
+      ]
+    }
+  ]
+}

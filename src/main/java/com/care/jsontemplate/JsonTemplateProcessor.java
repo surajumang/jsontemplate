@@ -16,6 +16,8 @@ package com.care.jsontemplate;
  * @author suraj.kumar
  */
 
+import org.apache.commons.jexl3.JexlContext;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -32,9 +34,9 @@ public interface JsonTemplateProcessor {
     /**
      * Main processor method which will be used by the users
      * */
-    void process(Reader reader, Writer writer, JsonTemplateContext jsonTemplateContext);
+    void process(Reader reader, Writer writer, JexlContext jexlContext);
 
-    String process(String jsonData, JsonTemplateContext jsonTemplateContext);
+    String process(String jsonData, JexlContext jexlContext);
 
-    void process(InputStream inputStream, OutputStream outputStream, JsonTemplateContext jsonTemplateContext);
+    void process(InputStream inputStream, OutputStream outputStream, JexlContext jexlContext);
 }

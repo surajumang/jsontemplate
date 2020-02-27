@@ -11,7 +11,6 @@
 package com.care.impl;
 
 import com.care.jsontemplate.ExpressionEvaluator;
-import com.care.jsontemplate.JsonTemplateContext;
 import org.apache.commons.jexl3.JexlBuilder;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.jexl3.JexlEngine;

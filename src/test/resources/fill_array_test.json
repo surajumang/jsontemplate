@@ -1,0 +1,13 @@
+{
+  "id":"attr-service.tutoring.location",
+  "title":"I'm willing to work in...",
+  "groups":[
+    {
+      "id":"1",
+      "_attributes": {
+        "_type": "array",
+        "_expr": "tutoring_location_attributes"
+      }
+    }
+  ]
+}
