@@ -16,6 +16,8 @@ package com.care.jsontemplate;
  * @author suraj.kumar
  */
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
@@ -30,5 +32,9 @@ public interface JsonTemplateProcessor {
     /**
      * Main processor method which will be used by the users
      * */
-    Writer read(Reader reader, JsonTemplateContext jsonTemplateContext);
+    void process(Reader reader, Writer writer, JsonTemplateContext jsonTemplateContext);
+
+    String process(String jsonData, JsonTemplateContext jsonTemplateContext);
+
+    void process(InputStream inputStream, OutputStream outputStream, JsonTemplateContext jsonTemplateContext);
 }

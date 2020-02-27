@@ -10,8 +10,21 @@
  */
 package com.care.impl;
 
+import com.care.impl.transformer.JsonNumberTransformer;
+import com.care.jsontemplate.JsonTemplateContext;
+import com.care.jsontemplate.JsonTemplateProcessor;
+import com.care.jsontemplate.JsonValueTransformer;
+import org.apache.commons.jexl3.MapContext;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Created 26 Feb 2020
@@ -19,14 +32,41 @@ import org.junit.Test;
  * @author suraj.kumar
  */
 public class DefaultJsonTemplateProcessorTest {
+    public static final Logger logger = Logger
+            .getLogger(DefaultJsonTemplateProcessor.class.getSimpleName());
+    public static JsonTemplateContext context;
+
+    private JsonObject testObject;
+    private JsonValue expectedValue;
 
     @Before
-    public void setup() throws Exception{
-
+    public void setup(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "Suraj");
+        map.put("booleanValue", true);
+        map.put("number", 12);
+        context = new JexlContextWrapper(map);
     }
 
-    @Test
+//    @Test
     public void transformSimple() {
+        testObject = Json.createObjectBuilder()
+                .add("_templateField", Json.createObjectBuilder()
+                        .add("_expr", "name")
+                        .add("_type", "string"))
+                .build();
+        expectedValue = Json.createObjectBuilder()
+                .add("templateField", "Suraj")
+                .build();
+
+        logger.info("Input Json : " + testObject.toString());
+        logger.info("Expected Json : " + expectedValue.toString());
+        // how to create a JsonTemplate context.
+        // use a wrapper to wrap JEXLcontext and delegate calls to it.
+        JsonTemplateProcessor jsonTemplateProcessor = new DefaultJsonTemplateProcessor();
+
+        String generated = jsonTemplateProcessor.process(testObject.toString(), context);
+        Assert.assertEquals(expectedValue.toString(), generated);
 
     }
 }

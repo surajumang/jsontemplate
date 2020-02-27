@@ -20,44 +20,67 @@ import org.junit.Test;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Created 26 Feb 2020
  *
  * @author suraj.kumar
  */
-public class JsonArrayTransformerTest {
-    public static final Logger logger = Logger.getLogger(JsonArrayTransformerTest.class.getSimpleName());
+public class JsonObjectTransformerTest {
     public static final JexlExpressionEvaluator evaluator = new JexlExpressionEvaluator();
     private JsonObject testObject;
     private JsonValue expectedValue;
 
+    public static class DummyClass{
+        private String firstName;
+        private Long id;
+        private Map<String, Object> data = Collections.singletonMap("firstVal", 1234);
+
+        public DummyClass(String firstName, Long id) {
+            this.firstName = firstName;
+            this.id = id;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public Map<String, Object> getData() {
+            return data;
+        }
+    }
+
     @Before
     public void setup(){
         Map<String, Object> context = new HashMap<>();
-        context.put("name", Arrays.asList("Suraj", "Sujit", "Deepak"));
+        context.put("value", new DummyClass("Suraj", 123L));
         context.put("booleanValue", true);
+        context.put("number", 12);
         evaluator.setContext(new MapContext(context));
     }
 
     @Test
-    public void simpleArrayTest() {
+    public void simpleNumberTest() {
         testObject = Json.createObjectBuilder()
-                .add("_expr", "name")
-                .add("_type", "array")
+                .add("_expr", "value")
+                .add("_type", "object")
                 .build();
-        expectedValue = Json.createArrayBuilder()
-                .add("Suraj")
-                .add("Sujit")
-                .add("Deepak")
+        expectedValue = Json.createObjectBuilder()
+                .add("data", Json.createObjectBuilder()
+                        .add("firstVal", 1234))
+                .add("firstName", "Suraj")
+                .add("id", 123L)
                 .build();
-        logger.info("Input Json : " + testObject.toString());
-        logger.info("Expected Json : " + expectedValue.toString());
-        JsonValueTransformer transformer = new JsonArrayTransformer(evaluator);
+
+        //IMPT : Json keys are ordered lexicographically.
+        JsonValueTransformer transformer = new JsonObjectTransformer(evaluator);
         Assert.assertEquals(expectedValue, transformer.transform(testObject));
     }
 }
