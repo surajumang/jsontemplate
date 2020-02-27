@@ -11,9 +11,7 @@
 package com.care.impl;
 
 import com.care.data.Attribute;
-import com.care.impl.transformer.JsonNumberTransformer;
 import com.care.jsontemplate.JsonTemplateProcessor;
-import com.care.jsontemplate.JsonValueTransformer;
 import org.apache.commons.jexl3.JexlContext;
 import org.apache.commons.jexl3.MapContext;
 import org.junit.Assert;
@@ -95,8 +93,8 @@ public class DefaultJsonTemplateProcessorTest {
     @Test
     public void arrayTransform2() {
         testObject = Json.createReader(getClass()
-                .getResourceAsStream("/fill_array_test.json")).readObject();
-        expectedValue = Json.createReader(getClass().getResourceAsStream("/fill_array_expected.json")).readObject();
+                .getResourceAsStream("/arrays/fill_array_test.json")).readObject();
+        expectedValue = Json.createReader(getClass().getResourceAsStream("/arrays/fill_array_expected.json")).readObject();
         JsonTemplateProcessor jsonTemplateProcessor = new DefaultJsonTemplateProcessor();
 
         logger.info("Input Json : " + testObject.toString());
